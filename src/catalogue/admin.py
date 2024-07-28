@@ -1,5 +1,8 @@
-from sqladmin import ModelView
-
+import os
+from fastapi import FastAPI
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqladmin import ModelView, Admin
 from src.catalogue.models.database import (
     Category,
     Product,
@@ -8,9 +11,18 @@ from src.catalogue.models.database import (
     ProductImage,
     StockRecord,
 )
+from basket.models import Basket, Base
 
+app = FastAPI()
+
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@db/fastapi_shop")
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base.metadata.create_all(bind=engine)
 
 CATALOGUE_CATEGORY = 'Catalogue'
+SHOP_CATEGORY = 'Shop'
 
 
 class ProductAdmin(ModelView, model=Product):
@@ -62,10 +74,22 @@ class ProductDiscountAdmin(ModelView, model=ProductDiscount):
     category = CATALOGUE_CATEGORY
 
 
-def register_products_admin_views(admin):
+class BasketAdmin(ModelView, model=Basket):
+    column_list = ['id', 'user_id', 'price', 'status']
+    search_fields = ['id', 'user_id', 'status']
+    icon = "fas fa-shopping-basket"
+    category = SHOP_CATEGORY
+
+
+def register_admin_views(admin):
     admin.add_view(ProductAdmin)
     admin.add_view(ProductCategoryAdmin)
     admin.add_view(CategoryAdmin)
     admin.add_view(ProductImageAdmin)
     admin.add_view(StockRecordAdmin)
     admin.add_view(ProductDiscountAdmin)
+    admin.add_view(BasketAdmin)
+
+
+admin = Admin(app, engine)
+register_admin_views(admin)
