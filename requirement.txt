@@ -1,5 +1,6 @@
 fastapi
 sqlalchemy
 sqladmin
+sqlmodel
 psycopg2-binary
 uvicorn
