@@ -1,6 +1,6 @@
 from sqladmin import ModelView
 from src.basket.models.basket import Basket
-from src.common.databases.postgres import SessionLocal
+from src.common.databases.postgres_async import get_session
 from src.catalogue.admin import register_products_admin_views
 from src.users.admin import register_users_admin_views
 
@@ -16,7 +16,9 @@ def register_admin_views(admin):
     admin.add_view(BasketAdmin)
 
 from sqladmin import Admin
-from your_app import app
+from fastapi import FastAPI
 
-admin = Admin(app, session=SessionLocal, title="My Admin Interface")
+app = FastAPI()
+
+admin = Admin(app, session=get_session, title="My Admin Interface")
 register_admin_views(admin)
