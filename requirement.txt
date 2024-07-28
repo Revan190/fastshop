@@ -4,3 +4,6 @@ sqladmin
 sqlmodel
 psycopg2-binary
 uvicorn
+Flask
+flask-login
+flask-migrate

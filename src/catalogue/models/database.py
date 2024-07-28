@@ -1,15 +1,7 @@
 from datetime import datetime
-from typing import (
-    List,
-    Optional,
-)
-
-from sqlmodel import (
-    Field,
-    Relationship,
-    SQLModel,
-)
-
+from typing import List, Optional
+from sqlmodel import Field, Relationship, SQLModel
+from .database import SessionLocal, engine
 
 class Product(SQLModel, table=True):
     __tablename__ = 'products'
@@ -35,7 +27,6 @@ class ProductCategory(SQLModel, table=True):
     product: Product = Relationship(back_populates="categories")
     category: "Category" = Relationship(back_populates="products")
 
-
 class Category(SQLModel, table=True):
     __tablename__ = 'categories'
 
@@ -53,7 +44,6 @@ class Category(SQLModel, table=True):
     )
     subcategories: List["Category"] = Relationship(back_populates="parent")
 
-
 class ProductImage(SQLModel, table=True):
     __tablename__ = 'product_images'
 
@@ -64,7 +54,6 @@ class ProductImage(SQLModel, table=True):
     caption: Optional[str] = None
 
     product: Product = Relationship(back_populates="images")
-
 
 class StockRecord(SQLModel, table=True):
     __tablename__ = 'stock_records'
@@ -77,7 +66,6 @@ class StockRecord(SQLModel, table=True):
     additional_info: Optional[str] = None
 
     product: Product = Relationship(back_populates="stock_records")
-
 
 class ProductDiscount(SQLModel, table=True):
     __tablename__ = 'product_discounts'

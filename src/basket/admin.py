@@ -1,6 +1,6 @@
 from sqladmin import ModelView
-from scr.basket.models.basket import Basket
-from scr.common.databases.postgres import SessionLocal
+from src.basket.models.basket import Basket
+from src.common.databases.postgres import SessionLocal
 from src.catalogue.admin import register_products_admin_views
 from src.users.admin import register_users_admin_views
 
