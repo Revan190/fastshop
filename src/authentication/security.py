@@ -9,13 +9,7 @@ from src.base_settings import base_settings
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def create_access_token(subject: Union[str, Any], expires_delta: timedelta = None) -> str:
-    """
-    Generates a JWT access token.
 
-    :param subject: The subject of the token (usually the user ID)
-    :param expires_delta: Time period before token expires
-    :return: JWT encoded token
-    """
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
@@ -25,20 +19,8 @@ def create_access_token(subject: Union[str, Any], expires_delta: timedelta = Non
     return encoded_jwt
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """
-    Checks whether the specified password matches the hash.
 
-    :param plain_password: Plain text password
-    :param hashed_password: Hashed password
-    :return: True, if the passwords match, otherwise False
-    """
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password: str) -> str:
-    """
-    Hashes the specified password.
-
-    :param password: Plain text password
-    :return: Hashed password
-    """
     return pwd_context.hash(password)

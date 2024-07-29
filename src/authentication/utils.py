@@ -1,23 +1,14 @@
 from typing import Annotated
 
-from fastapi import (
-    Depends,
-    HTTPException,
-    status,
-)
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import (
-    JWTError,
-    jwt,
-)
+from jose import JWTError, jwt
 
 from src.base_settings import base_settings
 from src.users.models.database import User
 from src.users.services import get_user_service
 
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
 
 async def get_current_user(
     service: Annotated[get_user_service, Depends()],
@@ -35,25 +26,25 @@ async def get_current_user(
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    user = await service.detail(pk=int(pk))
 
+    user = await service.detail(pk=int(pk))
     if user is None:
         raise credentials_exception
 
     return user
 
-
 async def get_current_active_user(
     current_user: Annotated[User, Depends(get_current_user)],
 ):
+
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
-
 async def get_current_admin(
     current_user: Annotated[User, Depends(get_current_user)],
 ):
+
     if not current_user.is_admin:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The user doesn't have enough privileges")
     return current_user

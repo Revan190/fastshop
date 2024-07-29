@@ -1,5 +1,5 @@
 from sqladmin import ModelView
-from src.basket.models.basket import Basket
+from src.basket.models.models import Basket
 from src.common.databases.postgres_async import get_session
 from src.catalogue.admin import register_products_admin_views
 from src.users.admin import register_users_admin_views
