@@ -1,8 +1,7 @@
-import os
 from fastapi import FastAPI
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqladmin import ModelView, Admin
+from sqlmodel import SQLModel, create_engine
+from sqladmin import Admin, ModelView
+
 from src.catalogue.models.database import (
     Category,
     Product,
@@ -11,21 +10,18 @@ from src.catalogue.models.database import (
     ProductImage,
     StockRecord,
 )
-from basket.models import Basket, Base
 
-print(Base)
-print(Basket)
-
+# Создание приложения FastAPI
 app = FastAPI()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@db/fastapi_shop")
+# Настройка подключения к базе данных
+DATABASE_URL = "sqlite:///./test.db"  # Замените на ваш URL базы данных
 engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base.metadata.create_all(bind=engine)
+# Инициализация SQLAdmin
+admin = Admin(app, engine)
 
 CATALOGUE_CATEGORY = 'Catalogue'
-SHOP_CATEGORY = 'Shop'
 
 class ProductAdmin(ModelView, model=Product):
     column_list = [Product.id, Product.title, Product.is_active]
@@ -70,20 +66,16 @@ class ProductDiscountAdmin(ModelView, model=ProductDiscount):
     icon = 'fa-solid fa-percent'
     category = CATALOGUE_CATEGORY
 
-class BasketAdmin(ModelView, model=Basket):
-    column_list = ['id', 'user_id', 'price', 'status']
-    search_fields = ['id', 'user_id', 'status']
-    icon = "fas fa-shopping-basket"
-    category = SHOP_CATEGORY
-
-def register_admin_views(admin):
+def register_products_admin_views(admin):
     admin.add_view(ProductAdmin)
     admin.add_view(ProductCategoryAdmin)
     admin.add_view(CategoryAdmin)
     admin.add_view(ProductImageAdmin)
     admin.add_view(StockRecordAdmin)
     admin.add_view(ProductDiscountAdmin)
-    admin.add_view(BasketAdmin)
 
-admin = Admin(app, engine)
-register_admin_views(admin)
+register_products_admin_views(admin)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

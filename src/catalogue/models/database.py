@@ -1,11 +1,13 @@
 from datetime import datetime
 from typing import List, Optional
-from sqlmodel import Field, Relationship, SQLModel
-from .database import SessionLocal, engine
+from sqlmodel import Field, Relationship, SQLModel, create_engine, Session
 
+# Определение базы данных и сессии
+DATABASE_URL = "postgresql://user:password@localhost/database"
+engine = create_engine(DATABASE_URL)
+
+# Определение моделей
 class Product(SQLModel, table=True):
-    __tablename__ = 'products'
-
     id: Optional[int] = Field(default=None, primary_key=True)
     title: str
     description: Optional[str] = None
@@ -18,24 +20,20 @@ class Product(SQLModel, table=True):
     discounts: List["ProductDiscount"] = Relationship(back_populates="product")
 
 class ProductCategory(SQLModel, table=True):
-    __tablename__ = 'product_categories'
-
     id: Optional[int] = Field(default=None, primary_key=True)
-    product_id: int = Field(foreign_key="products.id")
-    category_id: int = Field(foreign_key="categories.id")
+    product_id: int = Field(foreign_key="product.id")
+    category_id: int = Field(foreign_key="category.id")
 
     product: Product = Relationship(back_populates="categories")
     category: "Category" = Relationship(back_populates="products")
 
 class Category(SQLModel, table=True):
-    __tablename__ = 'categories'
-
     id: Optional[int] = Field(default=None, primary_key=True)
     title: str
     description: Optional[str] = None
     image: Optional[str] = None
     is_active: bool
-    parent_id: Optional[int] = Field(default=None, foreign_key="categories.id")
+    parent_id: Optional[int] = Field(default=None, foreign_key="category.id")
 
     products: List["ProductCategory"] = Relationship(back_populates="category")
     parent: Optional["Category"] = Relationship(
@@ -45,10 +43,8 @@ class Category(SQLModel, table=True):
     subcategories: List["Category"] = Relationship(back_populates="parent")
 
 class ProductImage(SQLModel, table=True):
-    __tablename__ = 'product_images'
-
     id: Optional[int] = Field(default=None, primary_key=True)
-    product_id: int = Field(foreign_key="products.id")
+    product_id: int = Field(foreign_key="product.id")
     original: str
     thumbnail: Optional[str] = None
     caption: Optional[str] = None
@@ -56,10 +52,8 @@ class ProductImage(SQLModel, table=True):
     product: Product = Relationship(back_populates="images")
 
 class StockRecord(SQLModel, table=True):
-    __tablename__ = 'stock_records'
-
     id: Optional[int] = Field(default=None, primary_key=True)
-    product_id: int = Field(foreign_key="products.id")
+    product_id: int = Field(foreign_key="product.id")
     price: float
     quantity: int
     date_created: datetime
@@ -68,13 +62,18 @@ class StockRecord(SQLModel, table=True):
     product: Product = Relationship(back_populates="stock_records")
 
 class ProductDiscount(SQLModel, table=True):
-    __tablename__ = 'product_discounts'
-
     id: Optional[int] = Field(default=None, primary_key=True)
-    product_id: int = Field(foreign_key="products.id")
+    product_id: int = Field(foreign_key="product.id")
     discount_percent: Optional[int] = None
     discount_amount: Optional[float] = None
     valid_from: datetime
     valid_to: datetime
 
     product: Product = Relationship(back_populates="discounts")
+
+# Создание таблиц
+SQLModel.metadata.create_all(engine)
+
+# Пример использования сессии
+def get_session():
+    return Session(engine)
