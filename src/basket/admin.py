@@ -1,12 +1,12 @@
 from sqladmin import ModelView
-from src.basket.models.models import Basket
+from src.basket.models.models import SQLAlchemyBasket
 from src.common.databases.postgres_async import get_session
 from src.catalogue.admin import register_products_admin_views
 from src.users.admin import register_users_admin_views
 
-class BasketAdmin(ModelView, model=Basket):
-    column_list = [Basket.id, Basket.user_id, Basket.price, Basket.status]
-    column_searchable_list = [Basket.user_id, Basket.status]
+class BasketAdmin(ModelView, model=SQLAlchemyBasket):
+    column_list = [SQLAlchemyBasket.id, SQLAlchemyBasket.user_id, SQLAlchemyBasket.price, SQLAlchemyBasket.status]
+    column_searchable_list = [SQLAlchemyBasket.user_id, SQLAlchemyBasket.status]
     icon = "fa-shopping-basket"
     category = "E-commerce"
 
