@@ -1,29 +1,20 @@
-from typing import List
-from pydantic import BaseModel as PydanticBaseModel
-from sqlalchemy import Column, Integer, ForeignKey, Numeric, Enum
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, ForeignKey, Enum, Numeric
+from sqlalchemy.orm import relationship
+from src.users.models.database import User
+from src.common.databases import Base
 import enum
 
-Base = declarative_base()
-
-class BasketItem(PydanticBaseModel):
-    product_id: int
-    quantity: int
-
-class PydanticBasket(PydanticBaseModel):
-    id: int
-    user_id: int
-    items: List[BasketItem] = []
-
 class BasketStatus(enum.Enum):
-    Open = "Open"
-    Closed = "Closed"   
-    Cancelled = "Cancelled"
+    OPEN = "Open"
+    CLOSED = "Closed"
+    CANCELLED = "Cancelled"
 
-class SQLAlchemyBasket(Base):
+class Basket(Base):
     __tablename__ = 'baskets'
-
-    id = Column(Integer, primary_key=True)
+    
+    id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey('users.id'))
-    price = Column(Numeric)
-    status = Column(Enum(BasketStatus))
+    price = Column(Numeric(10, 2))
+    status = Column(Enum(BasketStatus), default=BasketStatus.OPEN)
+
+    user = relationship("User")

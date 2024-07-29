@@ -11,6 +11,9 @@ from src.catalogue.models.database import (
     StockRecord,
 )
 
+from src.basket.models.models import Basket, BasketStatus
+from src.users.models.database import User
+
 # Создание приложения FastAPI
 app = FastAPI()
 
@@ -22,6 +25,7 @@ engine = create_engine(DATABASE_URL)
 admin = Admin(app, engine)
 
 CATALOGUE_CATEGORY = 'Catalogue'
+BASKET_CATEGORY = 'Basket'
 
 class ProductAdmin(ModelView, model=Product):
     column_list = [Product.id, Product.title, Product.is_active]
@@ -66,6 +70,14 @@ class ProductDiscountAdmin(ModelView, model=ProductDiscount):
     icon = 'fa-solid fa-percent'
     category = CATALOGUE_CATEGORY
 
+class BasketAdmin(ModelView, model=Basket):
+    column_list = [Basket.id, Basket.user_id, Basket.price, Basket.status]
+    column_searchable_list = [Basket.id, Basket.user_id]
+    form_columns = ['user_id', 'price', 'status']
+    column_sortable_list = [Basket.id, Basket.user_id, Basket.price, Basket.status]
+    icon = 'fa-solid fa-shopping-basket'
+    category = BASKET_CATEGORY
+
 def register_products_admin_views(admin):
     admin.add_view(ProductAdmin)
     admin.add_view(ProductCategoryAdmin)
@@ -73,6 +85,7 @@ def register_products_admin_views(admin):
     admin.add_view(ProductImageAdmin)
     admin.add_view(StockRecordAdmin)
     admin.add_view(ProductDiscountAdmin)
+    admin.add_view(BasketAdmin)
 
 register_products_admin_views(admin)
 
