@@ -1,9 +1,15 @@
+Alembic
 fastapi
 sqlalchemy
 sqladmin
 sqlmodel
+sqltypes
+sql
 psycopg2-binary
+Postman
 uvicorn
 Flask
 flask-login
 flask-migrate
+detail
+celery
