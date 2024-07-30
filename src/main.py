@@ -4,11 +4,10 @@ from sqladmin import Admin
 from src.admin import register_admin_views
 from src.base_settings import base_settings
 from src.catalogue.views import product_router
-from src.catalogue.routes import router as category_router  # Добавляем категорийный роутер
+from src.catalogue.routes import router as category_router
 from src.common.databases.postgres import postgres
 from src.general.views import router as status_router
 from src.routes import BaseRoutesPrefixes
-
 
 def include_routes(application: FastAPI) -> None:
     application.include_router(
@@ -21,10 +20,9 @@ def include_routes(application: FastAPI) -> None:
     )
     application.include_router(
         router=category_router,
-        prefix="/api",  # Добавляем префикс для категорийного роутера
+        prefix="/api",
         tags=['Categories'],
     )
-
 
 def get_application() -> FastAPI:
     application = FastAPI(
@@ -53,7 +51,6 @@ def get_application() -> FastAPI:
     include_routes(application)
 
     return application
-
 
 app = get_application()
 
