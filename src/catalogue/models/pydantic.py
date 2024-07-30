@@ -1,17 +1,21 @@
+from pydantic import BaseModel, constr
 from typing import Optional
 
-from pydantic import (
-    BaseModel,
-    constr,
-)
-
-
-class ProductModel(BaseModel):
-    id: Optional[int]
+class CategoryBase(BaseModel):
     title: str
-    description: Optional[str]
-    short_description: Optional[constr(max_length=20)]
-    is_active: bool
+    description: Optional[str] = None
+    is_active: bool = True
+    parent_id: Optional[int] = None
+
+class CategoryCreate(CategoryBase):
+    pass
+
+class CategoryUpdate(CategoryBase):
+    id: int
+
+class Category(CategoryBase):
+    id: int
 
     class Config:
+        orm_mode = True
         from_attributes = True
