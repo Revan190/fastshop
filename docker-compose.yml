@@ -17,14 +17,12 @@ services:
 
   db:
     image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: fastapi_shop
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     networks:
       - web_network
 
@@ -49,3 +47,4 @@ volumes:
 
 networks:
   web_network:
+  
