@@ -1,6 +1,5 @@
-from datetime import datetime
 from beanie import Document
-from beanie.odm.fields import IntField, DateTimeField
+from beanie.odm.fields import PydanticObjectId
 
 class ProductAnalytics(Document):
     product_id: int

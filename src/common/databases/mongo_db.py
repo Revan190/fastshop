@@ -1,8 +1,8 @@
 """
 Provide connection to MongoDB. Default database "casafari".
 """
-from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
+from beanie import init_beanie
 
 from src.base_settings import base_settings
 from src.common.singleton import SingletonMeta
