@@ -1,19 +1,22 @@
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from beanie import init_beanie, PydanticObjectId
+from beanie.odm.operators.update.general import Set
+from ..common.databases.mongo_db import get_database
+from .models.mongo import ProductAnalytics
 
-from src.catalogue.models.pydantic import ProductModel
-from src.catalogue.models.sqlalchemy import Product
-from src.common.databases.postgres import (
-    get_session,
-)
-from src.common.databases.postgres import get_session
-from src.common.repository.sqlalchemy import BaseSQLAlchemyRepository
+class ProductAnalyticsRepository:
+    def __init__(self):
+        self.collection = ProductAnalytics
 
+    async def insert_one(self, product_analytics: ProductAnalytics):
+        await product_analytics.insert()
 
-class ProductRepository(BaseSQLAlchemyRepository[Product, ProductModel]):
-    def __init__(self, session: AsyncSession):
-        super().__init__(model=Product, pydantic_model=ProductModel, session=session)
+    async def get_all(self):
+        return await self.collection.find_all().to_list()
 
+    async def get_by_id(self, product_id: int):
+        return await self.collection.find_one(self.collection.product_id == product_id)
 
-def get_product_repository(session: AsyncSession = Depends(get_session)) -> ProductRepository:
-    return ProductRepository(session=session)
+async def init_product_analytics_repository():
+    db = await get_database()
+    await init_beanie(database=db, document_models=[ProductAnalytics])
+    return ProductAnalyticsRepository()
