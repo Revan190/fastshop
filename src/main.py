@@ -1,3 +1,8 @@
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from fastapi import FastAPI
 from sqladmin import Admin
 
@@ -8,6 +13,8 @@ from src.catalogue.routes import router as category_router
 from src.common.databases.postgres import postgres
 from src.general.views import router as status_router
 from src.routes import BaseRoutesPrefixes
+from src.common.databases.postgres import engine as async_engine
+
 
 def include_routes(application: FastAPI) -> None:
     application.include_router(
@@ -24,6 +31,7 @@ def include_routes(application: FastAPI) -> None:
         tags=['Categories'],
     )
 
+
 def get_application() -> FastAPI:
     application = FastAPI(
         debug=base_settings.debug,
@@ -39,8 +47,6 @@ def get_application() -> FastAPI:
         admin = Admin(app=application, engine=engine)
         register_admin_views(admin)
 
-        from src.common.databases.postgres import engine as async_engine
-        from src.catalogue.models.sqlalchemy import SQLModel
         async with async_engine.begin() as conn:
             await conn.run_sync(SQLModel.metadata.create_all)
 
@@ -51,6 +57,7 @@ def get_application() -> FastAPI:
     include_routes(application)
 
     return application
+
 
 app = get_application()
 
