@@ -1,20 +1,10 @@
-from typing import (
-    Annotated,
-    Union,
-)
+from typing import Annotated, Union
 
-from fastapi import (
-    APIRouter,
-    Depends,
-    Response,
-    status,
-)
+from fastapi import APIRouter, Depends, Response, status
+from sqlmodel import Session
 
 from src.catalogue.models.database import Product
-from src.catalogue.routes import (
-    CatalogueRoutesPrefixes,
-    ProductRoutesPrefixes,
-)
+from src.catalogue.routes import CatalogueRoutesPrefixes, ProductRoutesPrefixes
 from src.catalogue.services import get_product_service
 from src.common.exceptions.base import ObjectDoesNotExistException
 from src.common.schemas.common import ErrorResponse
@@ -59,9 +49,11 @@ async def product_detail(
         Response with product details.
     """
     try:
-        response = await service.detail(pk=pk)
+        product = await service.detail(pk=pk)
+        if product is None:
+            response.status_code = status.HTTP_404_NOT_FOUND
+            return ErrorResponse(message="Product not found")
+        return product
     except ObjectDoesNotExistException as exc:
         response.status_code = status.HTTP_404_NOT_FOUND
         return ErrorResponse(message=exc.message)
-
-    return response

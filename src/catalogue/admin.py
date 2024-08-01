@@ -1,4 +1,6 @@
-from sqladmin import ModelView
+from fastapi import FastAPI
+from sqlmodel import SQLModel, create_engine
+from sqladmin import Admin, ModelView
 
 from src.catalogue.models.database import (
     Category,
@@ -9,9 +11,21 @@ from src.catalogue.models.database import (
     StockRecord,
 )
 
+from src.basket.models.models import Basket, BasketStatus
+from src.users.models.database import User
+
+# Создание приложения FastAPI
+app = FastAPI()
+
+# Настройка подключения к базе данных
+DATABASE_URL = "sqlite:///./test.db"  # Замените на ваш URL базы данных
+engine = create_engine(DATABASE_URL)
+
+# Инициализация SQLAdmin
+admin = Admin(app, engine)
 
 CATALOGUE_CATEGORY = 'Catalogue'
-
+BASKET_CATEGORY = 'Basket'
 
 class ProductAdmin(ModelView, model=Product):
     column_list = [Product.id, Product.title, Product.is_active]
@@ -21,14 +35,12 @@ class ProductAdmin(ModelView, model=Product):
     icon = 'fa-solid fa-box'
     category = CATALOGUE_CATEGORY
 
-
 class ProductCategoryAdmin(ModelView, model=ProductCategory):
     column_list = [ProductCategory.product, ProductCategory.category]
     column_searchable_list = [ProductCategory.product_id, ProductCategory.category_id]
     form_columns = ['product', 'category']
     icon = 'fa-solid fa-tags'
     category = CATALOGUE_CATEGORY
-
 
 class CategoryAdmin(ModelView, model=Category):
     column_list = [Category.title, Category.is_active, Category.parent]
@@ -37,14 +49,12 @@ class CategoryAdmin(ModelView, model=Category):
     icon = 'fa-solid fa-sitemap'
     category = CATALOGUE_CATEGORY
 
-
 class ProductImageAdmin(ModelView, model=ProductImage):
     column_list = [ProductImage.product, ProductImage.original, ProductImage.thumbnail]
     column_searchable_list = [ProductImage.caption]
     form_columns = ['product', 'original', 'thumbnail', 'caption']
     icon = 'fa-solid fa-image'
     category = CATALOGUE_CATEGORY
-
 
 class StockRecordAdmin(ModelView, model=StockRecord):
     column_list = [StockRecord.product, StockRecord.price, StockRecord.quantity]
@@ -53,7 +63,6 @@ class StockRecordAdmin(ModelView, model=StockRecord):
     icon = 'fa-solid fa-warehouse'
     category = CATALOGUE_CATEGORY
 
-
 class ProductDiscountAdmin(ModelView, model=ProductDiscount):
     column_list = [ProductDiscount.product, ProductDiscount.discount_percent, ProductDiscount.discount_amount]
     column_searchable_list = [ProductDiscount.valid_from, ProductDiscount.valid_to]
@@ -61,6 +70,13 @@ class ProductDiscountAdmin(ModelView, model=ProductDiscount):
     icon = 'fa-solid fa-percent'
     category = CATALOGUE_CATEGORY
 
+class BasketAdmin(ModelView, model=Basket):
+    column_list = [Basket.id, Basket.user_id, Basket.price, Basket.status]
+    column_searchable_list = [Basket.id, Basket.user_id]
+    form_columns = ['user_id', 'price', 'status']
+    column_sortable_list = [Basket.id, Basket.user_id, Basket.price, Basket.status]
+    icon = 'fa-solid fa-shopping-basket'
+    category = BASKET_CATEGORY
 
 def register_products_admin_views(admin):
     admin.add_view(ProductAdmin)
@@ -69,3 +85,10 @@ def register_products_admin_views(admin):
     admin.add_view(ProductImageAdmin)
     admin.add_view(StockRecordAdmin)
     admin.add_view(ProductDiscountAdmin)
+    admin.add_view(BasketAdmin)
+
+register_products_admin_views(admin)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
