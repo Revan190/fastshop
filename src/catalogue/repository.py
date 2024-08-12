@@ -20,3 +20,4 @@ async def init_product_analytics_repository():
     db = await get_database()
     await init_beanie(database=db, document_models=[ProductAnalytics])
     return ProductAnalyticsRepository()
+    

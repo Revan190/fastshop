@@ -7,3 +7,4 @@ class ProductAnalytics(Document):
 
     class Settings:
         collection = "product_analytics"
+        

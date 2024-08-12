@@ -13,7 +13,6 @@ async def get_product_analytics_service() -> ProductAnalyticsService:
     repository = await init_product_analytics_repository()
     return ProductAnalyticsService(product_analytics_repo=repository)
 
-# Эндпоинты
 @router.get("/product_detail/{product_id}")
 async def product_detail(product_id: int, 
                          product_service: ProductService = Depends(get_product_service),
