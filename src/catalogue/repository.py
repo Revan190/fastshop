@@ -8,16 +8,16 @@ from src.common.databases.postgres import (
 )
 from src.common.repository.sqlalchemy import BaseSQLAlchemyRepository
 class ProductRepository(BaseSQLAlchemyRepository[Product, ProductModel]):
-    def __init__(self, session: AsyncSession):
-        super().__init__(model=Product, pydantic_model=ProductModel, session=session)
+    def init(self, session: AsyncSession):
+        super().init(model=Product, pydantic_model=ProductModel, session=session)
 
 def get_product_repository(session: AsyncSession = Depends(get_session)) -> ProductRepository:
     return ProductRepository(session=session)
 
 
 class CategoryRepository(BaseSQLAlchemyRepository[Category, CategoryModel]):
-    def __init__(self, session: AsyncSession):
-        super().__init__(model=Category, pydantic_model=CategoryModel,
+    def init(self, session: AsyncSession):
+        super().init(model=Category, pydantic_model=CategoryModel,
                          session=session)
 
 

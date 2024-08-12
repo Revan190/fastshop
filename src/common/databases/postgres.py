@@ -6,12 +6,12 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import declarative_base
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(name)
 
 Base = declarative_base()
 
 class Database:
-    def __init__(self):
+    def init(self):
         self.__session = None
         self._engine = None
 
@@ -40,3 +40,4 @@ postgres = Database()
 async def get_session():
     async for session in postgres.get_db():
         yield session
+        
