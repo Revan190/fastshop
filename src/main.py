@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from sqladmin import Admin
+from dotenv import load_dotenv
 
 from src.admin import register_admin_views
 from src.authentication.views import router as auth_router
-from src.base_settings import base_settings
+from src.base_settings import base_settings 
 from src.catalogue.views import product_router
 from src.common.databases.mongo_db import init_mongo_db
 from src.common.databases.postgres import postgres
@@ -11,7 +12,7 @@ from src.general.views import router as status_router
 from src.reviews.views import product_reviews_router
 from src.routes import BaseRoutesPrefixes
 from src.users.views import user_router
-
+from src.catalogue.routes import router as catalogue_router
 
 def include_routes(application: FastAPI) -> None:
     application.include_router(
@@ -39,6 +40,11 @@ def include_routes(application: FastAPI) -> None:
         tags=['Reviews'],
     )
 
+    application.include_router(
+        router=catalogue_router,
+        prefix="/catalogue",
+        tags=['Catalogue'],
+    )
 
 def get_application() -> FastAPI:
     application = FastAPI(
@@ -65,5 +71,10 @@ def get_application() -> FastAPI:
 
     return application
 
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/src')
 
 app = get_application()
+load_dotenv()

@@ -1,5 +1,5 @@
 from fastapi import Depends
-from .repository import ProductRepository, get_product_repository
+from .repository import ProductRepository, get_product_repository, ProductAnalyticsRepository
 from .models.pydantic import ProductModel
 from ..common.service import BaseService
 from datetime import datetime

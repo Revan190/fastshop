@@ -57,3 +57,5 @@ factory_boy
 TDD
 icons
 CRUD
+pydantic[email]
+mongoengine

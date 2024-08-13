@@ -1,5 +1,5 @@
 from beanie import Document
-from beanie.odm.fields import PydanticObjectId
+from datetime import datetime
 
 class ProductAnalytics(Document):
     product_id: int
@@ -7,4 +7,3 @@ class ProductAnalytics(Document):
 
     class Settings:
         collection = "product_analytics"
-        
